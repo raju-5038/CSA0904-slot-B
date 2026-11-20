@@ -1,0 +1,85 @@
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Main extends JFrame {
+
+    JTextField amount = new JTextField(10);
+
+    JComboBox<String> from = new JComboBox<>(
+        new String[]{"INR", "USD", "EUR"});
+
+    JComboBox<String> target = new JComboBox<>(
+        new String[]{"USD", "EUR", "INR"});
+
+    JLabel result = new JLabel(" ");
+
+    public Main() {
+        super("Currency Converter");
+
+        setLayout(new FlowLayout());
+
+        JButton convertButton = new JButton("Convert");
+
+        add(new JLabel("Amount:"));
+        add(amount);
+        add(new JLabel("From:"));
+        add(from);
+        add(new JLabel("To:"));
+        add(target);
+        add(convertButton);
+        add(result);
+
+        // TODO 1: One lambda listener for both triggers
+        ActionListener handler = e -> convert();
+
+        convertButton.addActionListener(handler);
+        amount.addActionListener(handler);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+
+        setSize(400, 200);
+        setVisible(true);
+    }
+
+    private double rate(String currency) {
+        if (currency.equals("USD")) return 83;
+        if (currency.equals("EUR")) return 90;
+        return 1;
+    }
+
+    private void convert() {
+
+        // TODO 2: Validate and convert amount
+        try {
+            double value = Double.parseDouble(amount.getText());
+
+            double converted = value *
+                rate(from.getSelectedItem().toString()) /
+                rate(target.getSelectedItem().toString());
+
+            String answer = String.format("%.2f", converted);
+
+            result.setText(answer);
+
+            JOptionPane.showMessageDialog(this,
+                "Converted Amount: " + answer + " "
+                + target.getSelectedItem());
+
+        } catch (NumberFormatException e) {
+            result.setText("Invalid amount");
+
+            JOptionPane.showMessageDialog(this,
+                "Invalid amount");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Main());
+    }
+}
