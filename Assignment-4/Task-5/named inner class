@@ -1,0 +1,68 @@
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Main extends JFrame {
+
+    JTextField amount = new JTextField(10);
+    JComboBox<String> from = new JComboBox<>(
+        new String[]{"INR", "USD", "EUR"});
+    JComboBox<String> to = new JComboBox<>(
+        new String[]{"USD", "EUR", "INR"});
+
+    public Main() {
+        setTitle("Currency Converter");
+        setLayout(new FlowLayout());
+
+        JButton convert = new JButton("Convert");
+
+        add(new JLabel("Amount:"));
+        add(amount);
+        add(from);
+        add(to);
+        add(convert);
+
+        ConvertHandler handler = new ConvertHandler();
+        convert.addActionListener(handler);
+        amount.addActionListener(handler);
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
+
+        setSize(350, 200);
+        setVisible(true);
+    }
+
+    class ConvertHandler implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            try {
+                double value = Double.parseDouble(amount.getText());
+                double result = value *
+                    rate(from.getSelectedItem().toString()) /
+                    rate(to.getSelectedItem().toString());
+
+                JOptionPane.showMessageDialog(Main.this,
+                    String.format("%.2f %s", result,
+                    to.getSelectedItem()));
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(Main.this,
+                    "Invalid amount");
+            }
+        }
+    }
+
+    double rate(String c) {
+        if (c.equals("USD")) return 83;
+        if (c.equals("EUR")) return 90;
+        return 1;
+    }
+
+    public static void main(String[] args) {
+        new Main();
+    }
+}
